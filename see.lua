@@ -247,5 +247,3 @@ function dump(list)
 	str = str .. "}"
 	return str
 end
-
--- Git test
