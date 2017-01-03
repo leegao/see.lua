@@ -61,6 +61,17 @@ function utils.filter(predicate, list)
     return solution
 end
 
+function utils.reduce(operator, list, init)
+    for _, v in ipairs(list) do
+        if not init then
+            init = v
+        else
+            init = operator(init, v)
+        end
+    end
+    return init
+end
+
 function utils.map(transform, list)
     local solution = {}
     for k, v in pairs(list) do

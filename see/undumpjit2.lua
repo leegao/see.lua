@@ -885,6 +885,9 @@ local function undump(str_or_function)
                 local numparams = self.numparams
                 local params = {}
                 for i = 1, numparams do
+                    if not self.varinfo[i] then
+                        return ("(%s arguments)"):format(numparams)
+                    end
                     table.insert(params, self.varinfo[i][1])
                 end
                 local is_varargs = band(self.flags, 2) == 2
