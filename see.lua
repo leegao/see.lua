@@ -27,7 +27,7 @@ local function format(object, name)
         elseif type(object) == 'string' then
             return ('.%s = "%s"'):format(name, tostring(object))
         else
-            return name and ('%s = %s'):format(name, tostring(object))
+            return name and ('.%s = %s'):format(name, tostring(object))
         end
     end
 
@@ -46,7 +46,7 @@ local function lines(str)
     return t
 end
 
-function see(object)
+function see(object, query)
     local output = ''
     if type(object) == 'function' then
         local proto = undump(object)
@@ -74,12 +74,22 @@ function see(object)
     else
         output = tostring(object)
     end
+    if query then
+        local i, j = output:find(query)
+        local highlighting = {}
+        while i and j do
+            table.insert(highlighting, {i, j})
+            i, j = output:find(query, j + 1)
+        end
+        local highlight = require 'see.highlight'
+        output = highlight(output, highlighting)
+    end
     return setmetatable(
         {},
         {
             __tostring = function() return output end,
             __index = function(self, k)
-                if k == 'see' and type(object) == 'function' then
+                if k == 'sourcecode' and type(object) == 'function' then
                     local proto = undump(object)
                     if proto.source and proto.source:sub(1, 1) == '@' then
                         local source = proto.source:sub(2)
