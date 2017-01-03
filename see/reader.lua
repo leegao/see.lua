@@ -39,7 +39,6 @@ local function double(str, i)
     -- hilo - 0 - man
     -- exp_mask = 0b01111111111100000000000000000000
     local e = 2^(bit.rshift(bit.band(hi,0x7ff00000),20)-1023)
-    --print(bit.tohex(hi),bit.tohex(lo), e)
     local m = 1
     for k=1,52 do
         local c = 0
@@ -50,7 +49,7 @@ local function double(str, i)
         local msk = 2^j
         if bit.rshift(bit.band(n, msk), j) ~= 0 then
             -- add (1/msk)/2 to m
-            m = m + (1/(2^(53-i)))
+            m = m + (1/(2^(53-k)))
         end
     end
     return m*e, i
@@ -58,7 +57,7 @@ end
 
 local function contexualize(f)
     return function(ctx, ...)
-        local str, i = unpack(ctx)
+        local str, i = table.unpack(ctx)
         local r, i = f(str, i, ...)
         ctx[2] = i
         return r

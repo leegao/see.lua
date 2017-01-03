@@ -1,5 +1,9 @@
 local utils = {}
 
+if not table.unpack then
+   table.unpack = unpack
+end
+
 function utils.copy(t)
     if type(t) ~= "table" then return t end
     local seen = {} -- for circular references
@@ -117,8 +121,8 @@ function utils.uloop(tab)
         local value
         state, value = next(tab, state)
         if value then
-            if unpack(value) then
-                return unpack(value)
+            if table.unpack(value) then
+                return table.unpack(value)
             else
                 return iter()
             end

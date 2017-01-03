@@ -1,5 +1,4 @@
 local undump = require 'see.undump52'
-local reader = require 'see.reader'
 
-local fun = undump.undump(function(a, b, c) end)
+local fun = undump.undump(undump.undump)
 print(fun)
