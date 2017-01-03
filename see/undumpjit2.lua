@@ -666,6 +666,7 @@ local function bcread_proto(ls, target)
     -- Read prototype header.
     local flags = bcread_byte(ls)
     action(target, "proto_flags", ls, flags)
+    target.proto.flags = flags
     local numparams = bcread_byte(ls)
     action(target, "proto_numparams", ls, numparams)
     target.proto.numparams = numparams
@@ -886,6 +887,8 @@ local function undump(str_or_function)
                 for i = 1, numparams do
                     table.insert(params, self.varinfo[i][1])
                 end
+                local is_varargs = band(self.flags, 2) == 2
+                if is_varargs then table.insert(params, '...') end
                 return ("(%s)"):format(table.concat(params, ', '))
             end
         }

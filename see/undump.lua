@@ -2,8 +2,10 @@ local reader = require 'see.reader'
 
 local function undump(str_or_function)
     local str = str_or_function
+    local status
     if type(str_or_function) == 'function' then
-        str = string.dump(str_or_function)
+        status, str = pcall(string.dump, str_or_function)
+        if not status then return '(?)', str  end
     end
     assert(type(str) == 'string', "You can only undump functions or bytecode")
     local ctx = reader.new_reader(str)
@@ -24,7 +26,9 @@ local function undump(str_or_function)
     else
         error "Only Lua 5.{1,2,3} and LuaJIT2 are supported."
     end
-    return undump.undump(str)
+    local s, v = pcall(undump.undump, str)
+    if s then return v end
+    return '(?)', v
 end
 
 return undump

@@ -142,9 +142,15 @@ function undump52.undump(str_or_function)
         {
             __tostring = function(self)
                 local nparams = self.nparams
-                local params = utils.sublist(self.debug.locals, 1, nparams)
-                if #params ~= nparams then return ('(%s arguments)'):format(nparams) end
-                return ('(%s)'):format(table.concat(utils.map(function(x) return x.name end, params), ', '))
+                local is_vararg = self.is_vararg ~= 0
+                local params = utils.map(
+                    function(x) return x.name end,
+                    utils.sublist(self.debug.locals, 1, nparams))
+                if #params ~= nparams then
+                    return ('(%s arguments%s)'):format(nparams, is_vararg and ' and varargs' or '')
+                end
+                if is_vararg then table.insert(params, '...') end
+                return ('(%s)'):format(table.concat(params, ', '))
             end
         })
 end
