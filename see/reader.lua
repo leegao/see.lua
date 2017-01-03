@@ -70,6 +70,8 @@ local function new_reader(str)
     return setmetatable({str, 1}, {__index=utils.copy(reader)})
 end
 
+function reader:rewind() self[2] = 1 return self end
+
 reader.new_reader = new_reader
 
 return reader
