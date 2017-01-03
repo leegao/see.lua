@@ -64,12 +64,16 @@ function see(object, query)
             output = pprint_list(enumerable) .. '\n\n'
         end
         local kv = {}
-        for k, v in pairs(object) do table.insert(kv, format(v, k)) end
-        output = output .. layout.layout(kv, 5, 0.9)
+        for k, v in pairs(object) do
+            if not enumerable[k] then
+                table.insert(kv, format(v, k))
+            end
+        end
+        output = output .. layout.layout(kv, 4, 0.9)
         if getmetatable(object) then
             local mt = {}
             for k, v in pairs(getmetatable(object)) do table.insert(mt, format(v, k)) end
-            output = output .. "\n\nMetatable:\n" .. layout.layout(mt, 5, 0.9)
+            output = output .. "\n\nMetatable:\n" .. layout.layout(mt, 4, 0.9)
         end
     else
         output = tostring(object)

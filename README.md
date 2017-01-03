@@ -1,76 +1,142 @@
-See.lua - A Lua introspection library
+# See.lua 
 
-	> see(string)
+*A Lua introspection library for Lua 5.1, 5.2, 5.3, and LuaJIT*
 
-	.byte(?)            .char(?)            .dump(?)            .find(?)
-	.format(?)          .gfind(?)           .gmatch(?)          .gsub(?)
-	.join(self, table, ...)                 .len(?)
-	.lower(?)           .match(?)           .rep(?)             .reverse(?)
-	.sub(?)             .upper(?)
+```lua
+> see(_G)
+.string[14]         .debug[16]          .rawlen(?)          .pairs(?)
+.loadfile(?)        ._VERSION = "Lua 5.2"                   .rawget(?)
+.next(?)            .math[30]           .print(?)           .type(?)
+.loadstring(?)      .assert(?)          .os[11]             .require(?)
+.select(?)          .module(?)          .rawset(?)          .tonumber(?)
+.coroutine[6]       .collectgarbage(?)  .xpcall(?)          .dofile(?)
+.rawequal(?)        .load(?)            .ipairs(?)          .getmetatable(?)
+.table[7]           .see(object, query) .bit32[12]          .io[14]
+.unpack(?)          .pcall(?)           .package[10]        .error(?)
+.tostring(?)        .setmetatable(?)    ._G[38]
+```
 
-Lua is a wonderful little language that lets you do a lot of cool stuff. However it's not very friendly to those of you who are more curious. For example, let's say that we were just given a random library:
+------------------------------------------------------------------------
 
-	> require "lanes"
+[![asciicast](https://asciinema.org/a/6ny1px38azbo3sk76c71oi8th.png)](https://asciinema.org/a/6ny1px38azbo3sk76c71oi8th)
 
-and we want to see what is in the lanes library:
+------------------------------------------------------------------------
 
-	> =lanes
-	table: 00698298
+Lua is a wonderful little language that lets you do a lot of cool stuff. However it's not very friendly to curious
+people. For example, let's say that we were just given a random library:
 
-Wait wait wait, what is it with all these numbers? All I wanted to do was look at what is inside the luasql.sqlite3 table. Now there's an easy solution for these types of situations:
+	> local parser = require 'luainlua.lua.parser'
 
-	> see(lanes)
-	.ABOUT[5]           ._M[9]              ._NAME              ._PACKAGE
-	.gen(...)           .genatomic(linda, key, initial_val)     .genlock(linda, key,N)
-	.linda()            .timer(linda, key, a, period)
+and we want to see what's offered:
 
-	Metatable
-	.
+	> parser
+	table: 0x913e00
 
-Oooh, now that's fancy. Notice how tables are listed with their size and functions with their parameters. Even functions with variable numbers parameters (...) are parsed correctly. Notice too that the metatables are listed as well. In this case, the lanes library contains a single __index element. Other metamethods are mapped as follows:
+Wait wait wait, what is it with all these numbers? All I wanted to do is to know what's inside the `parser` table. 
+Now there's an easy solution for these types of situations:
 
-		__index = ".",
-		__call = "()",
-		__add = "+",
-		__sub = "-",
-		__mul = "*",
-		__div = "/",
-		__mod = "%",
-		__pow = "^",
-		__unm = "-.",
-		__concat = "..",
-		__len = "#",
-		__eq = "==",
-		__lt = "<",
-		__le = "<=",
-		__newindex = ":=",
-		__gc = "GC",
-		__tostring = "tostring()",
-		__tonumber = "tonumber()",
+	> see(parser)
+	.grammar[84]        .ll1[83]            .prologue(stream)   .epilogue(...)
+    .default_action(...)                    .convert(token)
+    
+    Metatable:
+    .__call(this, str)
 
-But what if you just want to look inside of an indexed table without just listing all of the keys? See.lua can do it too:
+Oooh, now that's fancy. Notice how tables are listed with their size and functions with their parameters. 
+Even functions with variadic parameters `(...)` are listed correctly. Notice too that the metatables 
+are listed as well. In this case, the `parser` library contains a single `__call` element that takes in a string,
+presumably the string to be parsed.
 
-	> see{1,2,3,4,5,6,7,8,9,10}
-	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+Now, does this work with lists as well?
 
-and with key vars:
+	> see {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}
+      {1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+       21, 22, 23, 24, 25}
 
-	> see{1,2,3,see=see}
-	.see(object, query)
-	{1, 2, 3}
+Wow, it even lines up all of the columns for you!
 
-That's right, see(see) introspect itself. We can also chain introspection lookups.
+Let's go back to the `parser` example. Notice how there are `84` elements in the `parser.grammar` table. We can
+actually "see" them as well via
 
-	> self = see{1,2,3,see=see}
-	.see(object, query)
-	{1, 2, 3}
-	> self.see()
-	@see
-	function(object, query)
+    > see(parser).grammar
+    {"luainlua/lua/parser_table.lua"}
+    
+    .funcname'maybe#1[3]                    .functiondef[2]     .unop[4]
+    .retstat'maybe#2[3] .block'star#1[3]    .level7[4]          .block[2]
+    .exp7[3]            .assignment'star#1[3]                   .funcbody[2]
+    .root[2]            .assignment_or_call'maybe#1[3]          .field'maybe#3[3]
+    ...
+    > see(parser).grammar.root
+    {table[2]}
+    
+    .variable = "$root"
+    > see(parser).grammar.root[1]
+    {"$block"}
+    
+    .action(_1)
 
-We can also supply an optional query into see to refine our results. For example, suppose that we want to only see functions related to tan in the mathematics library, we can simply do the following:
+So we know that `parser.grammar.root[1] = {"$block", action = function(_1) ... end}`.
+
+Now, imagine that I'm debugging these grammars. I would like to know a little bit more about the
+`.action(_1)` function. By selecting it, you can view its metadata.
+
+    > see(parser).grammar.root[1].action
+    function(_1) {@/home/leegao/distro/install/share/lua/5.1/luainlua/lua/parser.lua 421:423}
+
+In fact, if the source-code is present, you can even view it directly
+
+    > see(parser).grammar.root[1].action.sourcecode
+    
+    __GRAMMAR__.grammar["root"][1].action = function(_1)
+      return  _1
+    end
+
+Neato.
+
+What's more, you can also select the metatable using the `.mt` field, like so
+
+    > see(parser)
+    .grammar[84]        .ll1[83]            .prologue(stream)   .epilogue(...)
+    .default_action(...)                    .convert(token)
+    
+    Metatable:
+    .__call(this, str)
+
+    > see(parser).mt
+    .__call(this, str)
+    
+    > see(parser).mt.__call.sourcecode
+    {__call = function(this, str)
+      local tokens = {}
+      for _, token in ipairs(this.prologue(str)) do
+        table.insert(
+          tokens,
+          setmetatable(
+            token,
+            {__tostring = function(self) return this.convert(self) end}))
+      end
+      local result = this.ll1:parse(tokens)
+      return this.epilogue(result)
+    end})
+
+
+We can also supply an optional query into `see` to highlight our results. 
+For example, suppose that we want to only see functions related to tan in the mathematics library:
 
 	> see(math, "tan")
-	.atan(?)            .atan2(?)           .tan(?)             .tanh(?)
+    .log(?)         .max(?)         .acos(?)        .huge = 1.#INF  .ldexp(?)
+    .pi = 3.1415926535898           .cos(?)         .<tan>h(?)      .pow(?)
+    .deg(?)         .<tan>(?)       .cosh(?)        .sinh(?)        .random(?)
+    .randomseed(?)  .frexp(?)       .ceil(?)        .floor(?)       .rad(?)
+    .abs(?)         .sqrt(?)        .modf(?)        .asin(?)        .min(?)
+    .mod(?)         .fmod(?)        .log10(?)       .a<tan>2(?)     .exp(?)
+    .sin(?)         .a<tan>(?)
+    
+    > see(math, "tan").atan("atan")
+    function(<?>) {native}
 
-Voila, pretty neat isn't it?
+
+<p><img src='http://i.imgur.com/rGHHLFy.png' align=center/></p>
+
+On Ansi-compatible terminals, you would see actual highlighting, whereas they are replaced by
+tags `<>` on windows.
