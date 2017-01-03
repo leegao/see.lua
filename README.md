@@ -1,6 +1,6 @@
 # See.lua 
 
-*A Lua introspection library for Lua 5.1, 5.2, 5.3, and LuaJIT*
+*An introspection library for Lua 5.1, 5.2, 5.3, and LuaJIT*
 
 ```lua
 > see(_G)
@@ -17,7 +17,7 @@
 ```
 
 ------------------------------------------------------------------------
-#### Demo
+### Demo
 
 <p align=center>
 <a href='https://asciinema.org/a/6ny1px38azbo3sk76c71oi8th' align=center>
@@ -27,20 +27,25 @@
 
 ------------------------------------------------------------------------
 
-#### Installation
+### Installation
+
+`see.lua` depends on either Lua 5.1 and above or LuaJIT. In addition, since `see.lua` disassembles
+user functions automatically, it depends on the `bit32` library for byte-stream manipulation.
 
 ```bash
 $ luarocks install see.lua
 ```
 
-#### Usage
+### Usage
 
 ```lua
 local see = require 'see'
 see(_G, 'print|error')
 ```
 
-#### Documentation
+------------------------------------------------------------------------
+
+### Documentation
 
 Lua is a wonderful little language that lets you do a lot of cool stuff. However it's not very friendly to curious
 people. For example, let's say that we were just given a random library:
@@ -168,7 +173,7 @@ For example, suppose that we want to only see functions related to tan in the ma
 .mod(?)         .fmod(?)        .log10(?)       .a<tan>2(?)     .exp(?)
 .sin(?)         .a<tan>(?)
 
-> see(math, "tan").atan("atan")
+> see(math, "tan").atan("?")
 function(<?>) {native}
 ```
 
