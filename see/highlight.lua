@@ -2,12 +2,16 @@ local function isWindows()
     return package.config:sub(1,1) == '\\'
 end
 
-local function highlight(string, highlighting, color)
-    if not color then color = isWindows() and '<' or '\x1b[93m' end
+local function highlight(string, highlighting)
+    local color = isWindows() and '<' or '\x1b[93m'
     table.sort(highlighting, function(a, b) return a[2] > b[2] end)
     for _, highlight in ipairs(highlighting) do
         local i, j = table.unpack(highlight)
-        string = string:sub(1, i - 1) .. color .. string:sub(i, j) .. (isWindows() and '>' or '\x1b[0m') .. string:sub(j + 1)
+        string = string:sub(1, i - 1) ..
+                color ..
+                string:sub(i, j) ..
+                (isWindows() and '>' or '\x1b[0m') ..
+                string:sub(j + 1)
     end
     return string
 end
