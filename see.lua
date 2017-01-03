@@ -30,6 +30,8 @@ local function format(object, name)
             return name and ('%s = %s'):format(name, object)
         end
     end
+
+    return ('[%s] = %s'):format(format(name), format(object))
 end
 
 local function pprint_list(enumerable)
