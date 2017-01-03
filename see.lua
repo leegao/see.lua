@@ -46,7 +46,7 @@ local function lines(str)
     return t
 end
 
-function see(object, query)
+local function see(object, query)
     local output = ''
     if type(object) == 'function' then
         local proto = undump(object)
