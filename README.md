@@ -19,7 +19,7 @@
 ------------------------------------------------------------------------
 #### Demo
 
-<p>
+<p align=center>
 <a href='https://asciinema.org/a/6ny1px38azbo3sk76c71oi8th' align=center>
 <img width=500 src='https://asciinema.org/a/6ny1px38azbo3sk76c71oi8th.png'/>
 </a>
