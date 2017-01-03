@@ -667,6 +667,7 @@ local function bcread_proto(ls, target)
     local flags = bcread_byte(ls)
     action(target, "proto_flags", ls, flags)
     target.proto.flags = flags
+    target.proto.source = target.chunkname
     local numparams = bcread_byte(ls)
     action(target, "proto_numparams", ls, numparams)
     target.proto.numparams = numparams
@@ -686,6 +687,8 @@ local function bcread_proto(ls, target)
             firstline = bcread_uleb128(ls)
             numlines = bcread_uleb128(ls)
             proto.firstline, proto.numlines = firstline, numlines
+            proto.first_line = firstline
+            proto.last_line = firstline + numlines
             action(target, "proto_lines", ls, firstline, numlines)
         end
     end

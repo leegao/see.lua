@@ -120,6 +120,7 @@ function undump52.load_function(ctx)
         constants    = constants,
         upvalues     = upvalues,
         debug        = debug,
+        source       = debug.source,
     }
 end
 

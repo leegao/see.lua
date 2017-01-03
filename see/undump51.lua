@@ -117,6 +117,7 @@ function undump51.load_function(ctx)
         constants    = constants,
         upvalues     = nupvalues,
         debug        = debug,
+        source       = debug.source,
     }
 end
 

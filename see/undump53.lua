@@ -136,6 +136,7 @@ function undump53.load_function(ctx)
         constants    = constants,
         upvalues     = up,
         debug        = debug,
+        source       = debug.source,
     }
 end
 
