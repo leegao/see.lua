@@ -4,15 +4,9 @@ local utils  = require 'see.utils'
 
 local function escape(str)
     -- replace non-ascii characters in str with their \xxx control code
-    local output = ''
-    for i = 1, #str do
-        local byte = str:byte(i)
-        if byte < 32 or byte > 126 then
-            output = output .. ('\\%d'):format(byte)
-        else
-            output = output .. string.char(byte)
-        end
-    end
+    local output = str:gsub(
+        "%c",
+        function(char) return string.format("\\%03d", string.byte(char)) end)
     return output
 end
 
