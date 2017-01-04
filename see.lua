@@ -11,13 +11,14 @@ local function format(object, name)
             for _ in pairs(object) do size = size + 1 end
             return ('%s[%s]'):format('table', tostring(size))
         elseif type(object) == 'string' then
-            return ('"%s"'):format(tostring(object))
+            return ('%q'):format(tostring(object))
         else
             return tostring(object)
         end
     end
 
-    if type(name) == 'string' then
+    -- If we have a name and it doesn't need to be quoted, use the .name format
+    if type(name) == 'string' and ('%q'):format(name) == ('"%s"'):format(name) then
         if type(object) == 'function' then
             return ('.%s%s'):format(name, tostring(undump(object)))
         elseif type(object) == 'table' then
@@ -25,7 +26,7 @@ local function format(object, name)
             for _ in pairs(object) do size = size + 1 end
             return ('.%s[%s]'):format(name, tostring(size))
         elseif type(object) == 'string' then
-            return ('.%s = "%s"'):format(name, tostring(object))
+            return ('.%s = %q'):format(name, tostring(object))
         else
             return name and ('.%s = %s'):format(name, tostring(object))
         end
