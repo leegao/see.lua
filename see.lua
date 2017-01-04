@@ -2,23 +2,37 @@ local undump = require 'see.undump'
 local layout = require 'see.layout'
 local utils  = require 'see.utils'
 
+local function escape(str)
+    -- replace non-ascii characters in str with their \xxx control code
+    local output = ''
+    for i = 1, #str do
+        local byte = str:byte(i)
+        if byte < 32 or byte > 126 then
+            output = output .. ('\\%d'):format(byte)
+        else
+            output = output .. string.char(byte)
+        end
+    end
+    return output
+end
+
 local function format(object, name)
     if name == nil then
         if type(object) == 'function' then
-            return ('%s%s'):format('function', tostring(undump(object)))
+            return ('function%s'):format(tostring(undump(object)))
         elseif type(object) == 'table' then
             local size = 0
             for _ in pairs(object) do size = size + 1 end
-            return ('%s[%s]'):format('table', tostring(size))
+            return ('table[%s]'):format(tostring(size))
         elseif type(object) == 'string' then
-            return ('%q'):format(tostring(object))
+            return escape(('%q'):format(object))
         else
             return tostring(object)
         end
     end
 
     -- If we have a name and it doesn't need to be quoted, use the .name format
-    if type(name) == 'string' and ('%q'):format(name) == ('"%s"'):format(name) then
+    if type(name) == 'string' and escape(('%q'):format(name)) == ('"%s"'):format(name) then
         if type(object) == 'function' then
             return ('.%s%s'):format(name, tostring(undump(object)))
         elseif type(object) == 'table' then
@@ -26,7 +40,7 @@ local function format(object, name)
             for _ in pairs(object) do size = size + 1 end
             return ('.%s[%s]'):format(name, tostring(size))
         elseif type(object) == 'string' then
-            return ('.%s = %q'):format(name, tostring(object))
+            return escape(('.%s = %q'):format(name, object))
         else
             return name and ('.%s = %s'):format(name, tostring(object))
         end
