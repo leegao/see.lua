@@ -70,10 +70,12 @@ local function see(object, query)
                 table.insert(kv, format(v, k))
             end
         end
+        table.sort(kv)
         output = output .. layout.layout(kv, 4, 0.9)
         if getmetatable(object) then
             local mt = {}
             for k, v in pairs(getmetatable(object)) do table.insert(mt, format(v, k)) end
+            table.sort(mt)
             output = output .. "\n\nMetatable:\n" .. layout.layout(mt, 4, 0.9)
         end
     else
