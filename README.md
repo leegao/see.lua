@@ -33,7 +33,7 @@
 user functions automatically, it depends on the `bit32` library for byte-stream manipulation.
 
 ```bash
-$ luarocks install see.lua
+$ luarocks install see
 ```
 
 ### Usage
