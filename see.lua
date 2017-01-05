@@ -2,11 +2,13 @@ local undump = require 'see.undump'
 local layout = require 'see.layout'
 local utils  = require 'see.utils'
 
+local function to_control_sequence(char)
+    return string.format("\\%03d", string.byte(char))
+end
+
 local function escape(str)
     -- replace non-ascii characters in str with their \xxx control code
-    local output = str:gsub(
-        "%c",
-        function(char) return string.format("\\%03d", string.byte(char)) end)
+    local output = str:gsub("%c", to_control_sequence)
     return output
 end
 
