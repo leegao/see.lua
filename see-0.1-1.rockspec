@@ -1,17 +1,17 @@
 package = "see"
-version = "0.1-0"
+version = "0.1-1"
 source = {
    url = "git://github.com/leegao/see.lua",
+   tag = "v0.1-1",
+   dir = "see.lua",
 }
 description = {
    summary = "An introspection library for Lua",
    detailed = [[
-      This is an example for the LuaRocks tutorial.
-      Here we would put a detailed, typically
-      paragraph-long description.
+      An introspection library that reports human-friendly summaries of Lua tables.
    ]],
-   homepage = "git://github.com/leegao/see.lua", -- We don't have one yet
-   license = "MIT/X11" -- or whatever you like
+   homepage = "https://github.com/leegao/see.lua",
+   license = "MIT",
 }
 dependencies = {
    "lua >= 5.1",
