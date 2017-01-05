@@ -141,7 +141,7 @@ function undump51.undump(str_or_function)
             __tostring = function(self)
                 local nparams = self.nparams
                 local is_vararg = self.is_vararg ~= 0
-                if nparams == 0 and self.is_vararg then return '(...)' end
+                if nparams == 0 and is_vararg then return '(...)' end
                 if nparams == 0 then return '()' end
                 local params = utils.map(
                     function(x) return x.name end,
